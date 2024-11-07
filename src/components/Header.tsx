@@ -9,6 +9,8 @@ import hand from '../images/HandCoins.svg'
 import bell from '../images/Bell.svg'
 import baseket from '../images/Basket.svg'
 import create from '../images/PlusSquare.svg'
+import avi from '../images/Ellipse 775.svg'
+import arrowDown from '../images/CaretDown.svg'
 import Button from './Button';
 const Header: React.FC = () => {
 
@@ -48,19 +50,19 @@ const Header: React.FC = () => {
                     </div>
                     <div className='items-center flex flex-col  cursor-pointer'>
                         <img src={dashboard} alt="" className=' h-[24px] w-[25px]  hover:text-black' />
-                        <p className=' text-sm text-[#647995]  hover:text-black'>Home</p>
+                        <p className=' text-sm text-[#647995]  hover:text-black'>Dashboard</p>
                     </div>
                     <div className='items-center flex flex-col  cursor-pointer'>
                         <img src={wallet} alt="" className=' h-[24px] w-[25px]  hover:text-black' />
-                        <p className=' text-sm text-[#647995]  hover:text-black'>Home</p>
+                        <p className=' text-sm text-[#647995]  hover:text-black'>Wallet</p>
                     </div>
                     <div className='items-center flex flex-col  cursor-pointer'>
                         <img src={list} alt="" className=' h-[24px] w-[25px]  hover:text-black' />
-                        <p className=' text-sm text-[#647995]  hover:text-black'>Home</p>
+                        <p className=' text-sm text-[#647995]  hover:text-black'>Plan a trip</p>
                     </div>
                     <div className='items-center flex flex-col  cursor-pointer'>
                         <img src={hand} alt="" className=' h-[24px] w-[25px]  hover:text-black' />
-                        <p className=' text-sm text-[#647995]  hover:text-black'>Home</p>
+                        <p className=' text-sm text-[#647995]  hover:text-black'>Commission for life</p>
                     </div>
                 </div>
 
@@ -72,19 +74,19 @@ const Header: React.FC = () => {
                     </Button>
                     <div className='items-center flex flex-col  cursor-pointer'>
                         <img src={bell} alt="" className=' h-[24px] w-[25px]  hover:text-black' />
-                        <p className=' text-sm text-[#647995]  hover:text-black'>Home</p>
+                        <p className=' text-sm text-[#647995]  hover:text-black'>Notification</p>
                     </div>
                     <div className='items-center flex flex-col  cursor-pointer'>
                         <img src={baseket} alt="" className=' h-[24px] w-[25px]  hover:text-black' />
-                        <p className=' text-sm text-[#647995]  hover:text-black'>Home</p>
+                        <p className=' text-sm text-[#647995]  hover:text-black'>Carts</p>
                     </div>
                     <div className='items-center flex flex-col  cursor-pointer'>
                         <img src={create} alt="" className=' h-[24px] w-[25px]  hover:text-black' />
-                        <p className=' text-sm text-[#647995]  hover:text-black'>Home</p>
+                        <p className=' text-sm text-[#647995]  hover:text-black'>Create</p>
                     </div>
-                    <div className='items-center flex  cursor-pointer'>
-                        <img src={create} alt="" className=' h-[24px] w-[25px] cursor-pointer ' />
-                        <img src={create} alt="" className=' h-[24px] w-[25px] cursor-pointer' />
+                    <div className='items-center flex  cursor-pointer gap-3'>
+                        <img src={avi} alt="" className=' h-[52px] w-[52px] cursor-pointer ' />
+                        <img src={arrowDown} alt="" className=' cursor-pointer text-[#647995]' />
 
                     </div>
 
