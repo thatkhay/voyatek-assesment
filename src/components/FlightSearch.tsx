@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 type FlightSearchParams = {
@@ -14,6 +14,16 @@ type FlightSearchParams = {
     currency_code?: string;
 };
 
+type Flight = {
+    id: string;
+    name: string;
+    logoUrl: string;
+    departure: string;
+    arrival: string;
+    minPrice: { units: number; currencyCode: string };
+    selected: boolean;
+};
+
 const FlightSearch: React.FC = () => {
     const [searchParams, setSearchParams] = useState<FlightSearchParams>({
         fromId: 'BOM.AIRPORT',
@@ -27,9 +37,28 @@ const FlightSearch: React.FC = () => {
         currency_code: 'AED',
     });
 
-    const [results, setResults] = useState<any[]>([]);
+    const [results, setResults] = useState<Flight[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [selectedFlights, setSelectedFlights] = useState<Flight[]>([]);
+    const [airline , setAirline] = useState<any[]>([])
+    const [fligts , setFlights] = useState<any[]>([])
+    // const [selectedFlights, setSelectedFlights] = useState<{ [key: string]: boolean }>({});
+
+    // useEffect(() => {
+    //     // Retrieve selected flights from localStorage when the component mounts
+    //     const savedSelectedFlights = localStorage.getItem('selectedFlights');
+    //     if (savedSelectedFlights) {
+    //         setSelectedFlights(JSON.parse(savedSelectedFlights));
+    //     }
+    // }, []);
+
+    // useEffect(() => {
+    //     // Store selected flights in localStorage whenever the selectedFlights state changes
+    //     if (Object.keys(selectedFlights).length > 0) {
+    //         localStorage.setItem('selectedFlights', JSON.stringify(selectedFlights));
+    //     }
+    // }, [selectedFlights]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -39,62 +68,64 @@ const FlightSearch: React.FC = () => {
         }));
     };
 
-    const handleSearch = async () => {
-        setLoading(true);
-        setError('');
+ const handleSearch = async () => {
+    setLoading(true);
+    setError(''); // Clear previous errors
 
-        try {
-            // Primary API call
-            const primaryResponse = await axios.get(`${process.env.REACT_APP_API_URL}`, {
-                headers: {
-                    'X-Rapidapi-Key': process.env.REACT_APP_API_KEY!,
-                    'X-Rapidapi-Host': 'booking-com15.p.rapidapi.com',
-                },
-                params: searchParams,
-            });
+    try {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}`, {
+            headers: {
+                'X-Rapidapi-Key': process.env.REACT_APP_API_KEY!,
+                'X-Rapidapi-Host': 'booking-com15.p.rapidapi.com',
+            },
+            params: searchParams,
+        });
 
-            const primaryResult = primaryResponse.data;
-            const airlines = primaryResult.data?.aggregation?.airlines || [];
+        const  resultData = await response.data;
 
-            // Secondary API call for additional flight times
-            const secondaryResponse = await axios.get(`${process.env.REACT_APP_API_URL}`, {
-                headers: {
-                    'X-Rapidapi-Key': process.env.REACT_APP_API_KEY!,
-                    'X-Rapidapi-Host': 'booking-com15.p.rapidapi.com',
-                },
-                params: {
-                    from: searchParams.fromId,
-                    to: searchParams.toId,
-                    departDate: searchParams.departDate,
-                },
-            });
+        console.log(resultData)
 
-            const secondaryResult = secondaryResponse.data;
-            const flights = secondaryResult.flightTimes || [];
+        if (resultData?.data?.aggregation?.airlines && resultData?.data?.aggregation?.flightTimes?.[0]) {
+            const formattedFlights = resultData?.data?.aggregation?.airlines.map((airline: any, ind: number) => ({
+                ...airline,
+                arrival: resultData?.data?.aggregation?.flightTimes[0].arrival[0] || null,
+                depature: resultData?.data?.aggregation?.flightTimes[0].depature[0] || null,
+                id: ind
+            }));
+            // console.log(formattedFlights)
+            setFlights(formattedFlights);
 
-            // Combine results from both APIs
-            setResults(
-                airlines.map((airline: any, index: number) => ({
-                    ...airline,
-                    departure: flights[index]?.departure || '',
-                    arrival: flights[index]?.arrival || '',
-                }))
-            );
-
-            if (!airlines.length) {
-                setError('No flights found for the selected criteria.');
-            }
-        } catch (error: any) {
-            setError(`Error fetching flight data: ${error.message}`);
-        } finally {
-            setLoading(false);
+        } else {
+            setError('No flights found. Try changing your search criteria.');
         }
+    } catch (error: any) {
+        setError(`Error fetching flight data: ${error.message}`);
+    } finally {
+        setLoading(false);
+    }
+};
+
+
+
+
+    const handleFlightSelect = (id: number) => {
+        // setSelectedFlights((prevSelected) => {
+        //     const newSelected = { ...prevSelected, [flight.id]: !prevSelected[flight.id] };
+        //     return newSelected;
+
+        // });
     };
+    // const isFlightSelected = (flight: Flight) => !!selectedFlights[flight.id];
+
+    // console.log( fligts);
+    // console.log( airline);
+  
 
     return (
         <div className="w-[65%] mx-auto p-6 bg-white shadow-lg rounded-lg">
             <h1 className="text-3xl font-bold text-center mb-6">Flight Search</h1>
-            
+
+            {/* Search form inputs */}
             <div className="grid grid-cols-1 gap-4 mb-6 md:grid-cols-2 lg:grid-cols-3">
                 <input
                     type="text"
@@ -188,23 +219,90 @@ const FlightSearch: React.FC = () => {
                         <div className="animate-spin rounded-full h-8 w-8 border-t-4 border-blue-500"></div>
                         <span>Loading...</span>
                     </div>
-                ) : results.length > 0 ? (
-                    results.map((flight, index) => (
-                        <div key={index} className="border p-4 rounded-lg mb-4 bg-gray-50 shadow-md">
+                ) :
+                 fligts.length > 0 ? (
+                    fligts.map((flight, ind) => (
+                        <div
+                            key={ind}
+                            onClick={() => handleFlightSelect(flight)}
+                            className={`border p-4 rounded-lg mb-4 shadow-md cursor-pointer 
+                               `
+                            }
+                        >
                             <div className="flex items-center space-x-4">
-                                <img src={flight.logoUrl} alt="logo" className="w-12 h-12 rounded-full" />
+                                <img src={flight?.logoUrl} alt="logo" className="w-12 h-12 rounded-full" />
                                 <div className="text-sm">
-                                    <p className="font-semibold text-lg">{flight.name}</p>
-                                    <p className="text-gray-600">{flight.departure.end} - {flight.arrival.end}</p>
+                                    <p className="font-semibold text-lg">{flight?.name}</p>
+                                    <p className="text-gray-600">
+                                        {flight?.depature?.end} - {flight?.arrival?.start}
+                                    </p>
                                 </div>
                             </div>
-                            <p className="mt-2">Price: {flight.minPrice?.units} {flight.minPrice?.currencyCode}</p>
+                            <p className="mt-2">
+                                Price: {flight?.minPrice?.units} {flight?.minPrice?.currencyCode}
+                            </p>
                         </div>
                     ))
                 ) : (
-                    !loading && <p className="mt-4 text-center text-gray-600">No flights found</p>
+                    <p className="text-center">No flights found. Try changing your search criteria.</p>
                 )}
             </div>
+
+
+{/* {fligts.length > 0 ? (
+    fligts.map((flight) => (
+        <div key={flight.id} onClick={() => handleFlightSelect(flight)}>
+            <div className="flex items-center space-x-4">
+                <img src={flight.logoUrl} alt="logo" className="w-12 h-12 rounded-full" />
+                <div className="text-sm">
+                    <p className="font-semibold text-lg">{flight?.name}</p>
+                    <p className="text-gray-600">
+                        Departure: {flight?.departure} - Arrival: {flight?.arrival}
+                    </p>
+                </div>
+            </div>
+            <p className="mt-2">
+                Price: {flight?.minPrice?.units} {flight?.minPrice?.currencyCode}
+            </p>
+        </div>
+    ))
+) : (
+    <p className="text-center">No flights found. Try changing your search criteria.</p>
+)} */}
+
+
+
+
+{/* 
+            {Object.keys(selectedFlights).length > 0 && (
+                <div className="mt-6">
+                    <h3 className="text-xl font-semibold">Selected Flights</h3>
+                    {Object.keys(selectedFlights)
+                        .filter((flightId: any) => selectedFlights[flightId])
+                        .map((flightId) => {
+                            const flight = results.find((f) => f.id === flightId);
+                            return (
+                                <div
+                                    key={flightId}
+                                    className="border p-4 rounded-lg mb-4 shadow-md bg-blue-100"
+                                >
+                                    <div className="flex items-center space-x-4">
+                                        <img src={flight?.logoUrl} alt="logo" className="w-12 h-12 rounded-full" />
+                                        <div className="text-sm">
+                                            <p className="font-semibold text-lg">{flight?.name}</p>
+                                            <p className="text-gray-600">
+                                                {flight?.departure} - {flight?.arrival}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <p className="mt-2">
+                                        Price: {flight?.minPrice?.units} {flight?.minPrice?.currencyCode}
+                                    </p>
+                                </div>
+                            );
+                        })}
+                </div>
+            )} */}
         </div>
     );
 };

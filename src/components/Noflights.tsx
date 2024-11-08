@@ -1,5 +1,6 @@
 import React from 'react'
 import Button from './Button'
+import { Link } from 'react-router-dom'
 
 const Noflights = () => {
     return (
@@ -9,9 +10,12 @@ const Noflights = () => {
             </div>
             <div className='flex items-center flex-col'>
                  <p>No Request Yet</p>
-                <Button variant='primary' size='medium' onClick={ () =>  'clicked'}>
+                 <Link to='/flight-search'>
+                 <Button variant='primary' size='medium' onClick={ () =>  'clicked'}>
                     Add Flight
                 </Button>
+                 </Link>
+                
             </div>
         </div>
 
