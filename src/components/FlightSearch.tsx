@@ -68,7 +68,7 @@ const FlightSearch: React.FC = () => {
         }));
     };
 
- const handleSearch = async () => {
+const handleSearch = async () => {
     setLoading(true);
     setError(''); // Clear previous errors
 
@@ -81,18 +81,20 @@ const FlightSearch: React.FC = () => {
             params: searchParams,
         });
 
-        const  resultData = await response.data;
-
-        console.log(resultData)
+        const resultData = response.data;
+        console.log(resultData); // Debugging
 
         if (resultData?.data?.aggregation?.airlines && resultData?.data?.aggregation?.flightTimes?.[0]) {
-            const formattedFlights = resultData?.data?.aggregation?.airlines.map((airline: any, ind: number) => ({
+            const { airlines } = resultData.data.aggregation;
+            const { flightTimes } = resultData.data.aggregation;
+
+            const formattedFlights = airlines.map((airline: any, ind: number) => ({
                 ...airline,
-                arrival: resultData?.data?.aggregation?.flightTimes[0].arrival[0] || null,
-                depature: resultData?.data?.aggregation?.flightTimes[0].depature[0] || null,
-                id: ind
+                arrival: flightTimes[0]?.arrival?.[ind] || null,  // Safe access with fallback
+                departure: flightTimes[0]?.departure?.[ind] || null,  // Safe access with fallback
             }));
-            // console.log(formattedFlights)
+            
+            console.log(formattedFlights); // Debugging
             setFlights(formattedFlights);
 
         } else {
@@ -108,17 +110,14 @@ const FlightSearch: React.FC = () => {
 
 
 
-    const handleFlightSelect = (id: number) => {
-        // setSelectedFlights((prevSelected) => {
-        //     const newSelected = { ...prevSelected, [flight.id]: !prevSelected[flight.id] };
-        //     return newSelected;
 
-        // });
+    const handleFlightSelect = (id: number) => {
+       
     };
     // const isFlightSelected = (flight: Flight) => !!selectedFlights[flight.id];
 
-    // console.log( fligts);
-    // console.log( airline);
+    console.log( fligts);
+    console.log( airline);
   
 
     return (
@@ -234,7 +233,7 @@ const FlightSearch: React.FC = () => {
                                 <div className="text-sm">
                                     <p className="font-semibold text-lg">{flight?.name}</p>
                                     <p className="text-gray-600">
-                                        {flight?.depature?.end} - {flight?.arrival?.start}
+                                        {/* {flight?.depature?.end} - {flight?.arrival?.start} */}
                                     </p>
                                 </div>
                             </div>
@@ -249,26 +248,7 @@ const FlightSearch: React.FC = () => {
             </div>
 
 
-{/* {fligts.length > 0 ? (
-    fligts.map((flight) => (
-        <div key={flight.id} onClick={() => handleFlightSelect(flight)}>
-            <div className="flex items-center space-x-4">
-                <img src={flight.logoUrl} alt="logo" className="w-12 h-12 rounded-full" />
-                <div className="text-sm">
-                    <p className="font-semibold text-lg">{flight?.name}</p>
-                    <p className="text-gray-600">
-                        Departure: {flight?.departure} - Arrival: {flight?.arrival}
-                    </p>
-                </div>
-            </div>
-            <p className="mt-2">
-                Price: {flight?.minPrice?.units} {flight?.minPrice?.currencyCode}
-            </p>
-        </div>
-    ))
-) : (
-    <p className="text-center">No flights found. Try changing your search criteria.</p>
-)} */}
+
 
 
 
