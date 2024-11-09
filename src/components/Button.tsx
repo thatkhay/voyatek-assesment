@@ -29,7 +29,7 @@ const Button: React.FC<ButtonProps> = ({
 
   const sizeStyles: { [key in NonNullable<ButtonProps['size']>]: string } = {
     small: "px-2 py-1 text-sm",
-    medium: "px-4 py-1 text-base",
+    medium: "px-8 py-3 text-base",
     large: "px-12 py-1 text-lg",
   };
 

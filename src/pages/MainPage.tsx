@@ -8,6 +8,9 @@ import icon from '../images/UserPlus.svg'
 import menu from '../images/DotsThree.svg'
 import one from '../images/one.svg'
 import Button from '../components/Button'
+import Noflights from '../components/Noflights'
+import NoHotels from '../components/NoHotels'
+import NoActivity from '../components/NoActivity'
 const MainPage = () => {
 
 
@@ -16,7 +19,7 @@ const MainPage = () => {
   }
 
   return (
-    <div className='bg-[#F0F2F5] flex p-6 gap-6'>
+    <div className='bg-[#F0F2F5] flex items-start p-6 gap-6'>
       <SideBar />
       <div className=' w-full p-6 bg-white'>
         <div className="relative w-full">
@@ -91,6 +94,15 @@ const MainPage = () => {
           </div>
           <img src={one} alt="one" className='mr-7' />
           </div>
+        </section>
+        <section className=' flex flex-col'>
+          <div className=' flex flex-col items-start mt-12'>
+            <p className=' text-xl font-bold text-start'>Trip itineraries</p>
+            <p className=' text-sm text-start'>Your trip itineraries are placed here</p>
+          </div>
+<Noflights/>
+<NoHotels/>
+<NoActivity/>
         </section>
 
       </div>
